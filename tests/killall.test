@@ -1,0 +1,24 @@
+#!/bin/bash
+
+[ -f testing.sh ] && . testing.sh
+
+#testing "name" "command" "result" "infile" "stdin"
+
+echo "#!$(which sh)
+while true; do
+  sleep 0.1
+done" > toybox.killall.test.script
+chmod a+x toybox.killall.test.script
+cp toybox.killall.test.script toybox.test
+
+tst=toybox.test
+./$tst &
+testing "short name" "killall -w $tst && echo killed ; \
+  pgrep -l $tst || echo really" "killed\nreally\n" "" ""
+
+tst=toybox.killall.test.script
+./$tst &
+testing "long name" "killall -w $tst && echo killed ; \
+  pgrep -l $tst || echo really" "killed\nreally\n" "" ""
+
+rm -f toybox.killall.test.script toybox.test
